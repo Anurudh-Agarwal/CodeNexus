@@ -1,4 +1,4 @@
-#CodeNexus
+# CodeNexus
 
 A college-exclusive developer social platform for competitive programming at IET Lucknow. 
 
@@ -18,16 +18,17 @@ A college-exclusive developer social platform for competitive programming at IET
  - **CP APIs** Codeforces, Leetcode GraphSQL, CodeChef
 
  ## Project Structure 
- codenexus/
+ ```text
+ CodeNexus/
 ├── frontend/ # Next.js React app
 ├── backend/ # Node.js Express server
 └── README.md
-
+```
 ## Getting Started (Coming Soon)
 Installation and setup instruction coming soon as we build the MVP. 
 
 ## Current Status
-** In Development** - MVP building in progress
+**In Development** - MVP building in progress
 
 ## License 
 MIT
