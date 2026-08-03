@@ -19,7 +19,7 @@ export default function RootLayout({
       <body className="bg-white">
         <Navbar />
         <Sidebar />
-        <main className="pt-16 pb-20 lg:ml-17 lg:pb-0">
+        <main className="pt-16 pb-20 lg:ml-16 lg:pb-0">
           {children}
         </main>
         <BottomNav />
