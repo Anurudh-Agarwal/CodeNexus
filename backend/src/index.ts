@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import leaderboardRoutes from './routes/leaderboard'
 
 const app=express();
 const PORT=5000
@@ -14,6 +15,8 @@ app.get('/health', (req, res)=>{
         timestamp: new Date().toISOString
     })  
 })
+
+app.use('/api/leaderboard', leaderboardRoutes)
 
 app.listen(PORT, ()=>{
     console.log(`server is running on http://localhost:${PORT}`)
