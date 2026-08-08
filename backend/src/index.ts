@@ -7,7 +7,9 @@ dotenv.config()
 
 const PORT=process.env.PORT
 
-app.use(cors())
+app.use(cors({
+    origin:"https://codenexus-lg9o.onrender.com/"
+}))
 app.use(express.json())
 
 app.get('/health', (req, res)=>{
@@ -26,7 +28,7 @@ app.use((err:any, req:express.Request, res:express.Response, next: express.NextF
     })
 })
 
-app.use('/api/leaderboard', leaderboardRoutes)
+app.use('api/leaderboard', leaderboardRoutes)
 
 app.listen(PORT , ()=>{
     console.log(`server is running on http://localhost:${PORT}`)
