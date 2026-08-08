@@ -1,6 +1,6 @@
 import { LeaderboardResponse } from "@/types"
 
-const API_BASE_URL = 'https://codenexus-lg9o.onrender.com'
+const API_BASE_URL = process.env.BACKEND_URL || 'https://codenexus-lg9o.onrender.com'
 
 const apiCall=async<T>(
     endpoint:string

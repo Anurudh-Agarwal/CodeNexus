@@ -5,10 +5,10 @@ import dotenv from 'dotenv'
 dotenv.config()
     const app=express();
 
-const PORT=process.env.PORT
+const PORT=process.env.PORT || 5000
 
 app.use(cors({
-    origin:"https://codenexus-lg9o.onrender.com/"
+    origin: process.env.FRONTEND_URL || "https://code-nexus-ten.vercel.app/"
 }))
 app.use(express.json())
 
@@ -20,6 +20,8 @@ app.get('/health', (req, res)=>{
     })  
 })
 
+app.use('/api/leaderboard', leaderboardRoutes)
+
 app.use((err:any, req:express.Request, res:express.Response, next: express.NextFunction)=>{
     console.error(err)
     res.status(500).json({
@@ -27,8 +29,6 @@ app.use((err:any, req:express.Request, res:express.Response, next: express.NextF
         error: 'Internal Server Error'
     })
 })
-
-app.use('api/leaderboard', leaderboardRoutes)
 
 app.listen(PORT , ()=>{
     console.log(`server is running on http://localhost:${PORT}`)
