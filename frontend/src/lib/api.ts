@@ -1,6 +1,6 @@
 import { LeaderboardResponse } from "@/types"
 
-const API_BASE_URL = process.env.BACKEND || 'https://codenexus-lg9o.onrender.com/'
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://codenexus-lg9o.onrender.com'
 
 const apiCall=async<T>(
     endpoint:string
@@ -26,6 +26,6 @@ export const getLeaderboard=async(filters?:{
     if(filters?.year) params.append('year', filters.year.toString());
     if(filters?.branch) params.append('branch', filters.branch);
     const queryString=params.toString()
-    const endpoint= `api/leaderboard${queryString?`?${queryString}`:''}`
+    const endpoint= `/api/leaderboard${queryString?`?${queryString}`:''}`
     return apiCall<LeaderboardResponse>(endpoint)
 }

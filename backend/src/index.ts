@@ -5,10 +5,10 @@ import dotenv from 'dotenv'
 dotenv.config()
     const app=express();
 
-const PORT=5000
+const PORT= process.env.PORT || 5000
 
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "https://code-nexus-ten.vercel.app/"
+    origin: process.env.FRONTEND_URL || "https://code-nexus-ten.vercel.app"
 }))
 app.use(express.json())
 
@@ -20,7 +20,7 @@ app.get('/health', (req, res)=>{
     })  
 })
 
-app.use('api/leaderboard', leaderboardRoutes)
+app.use('/api/leaderboard', leaderboardRoutes)
 
 app.use((err:any, req:express.Request, res:express.Response, next: express.NextFunction)=>{
     console.error(err)
