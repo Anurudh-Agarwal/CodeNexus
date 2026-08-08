@@ -20,6 +20,8 @@ type LeaderboardResponse = ApiResponse<{
   entries: Array<{
     id: string
     name: string
+    year: number
+    branch: string
     cf_rating: number
     lc_rating: number
     cc_rating: number
