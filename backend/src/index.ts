@@ -1,9 +1,11 @@
 import express from 'express'
 import cors from 'cors'
 import leaderboardRoutes from './routes/leaderboard'
+import dotenv from 'dotenv'
+dotenv.config()
+    const app=express();
 
-const app=express();
-const PORT=5000
+const PORT=process.env.PORT
 
 app.use(cors())
 app.use(express.json())
@@ -16,8 +18,16 @@ app.get('/health', (req, res)=>{
     })  
 })
 
+app.use((err:any, req:express.Request, res:express.Response, next: express.NextFunction)=>{
+    console.error(err)
+    res.status(500).json({
+        success:false, 
+        error: 'Internal Server Error'
+    })
+})
+
 app.use('/api/leaderboard', leaderboardRoutes)
 
-app.listen(PORT, ()=>{
+app.listen(PORT , ()=>{
     console.log(`server is running on http://localhost:${PORT}`)
 })
