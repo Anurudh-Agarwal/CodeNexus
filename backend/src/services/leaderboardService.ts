@@ -1,20 +1,60 @@
-import { mockLeaderboardData } from "../data/Leaderboard";
+import { supabase } from "../lib/supabase"
 
-interface LeaderboardFilters{
-    year?:number,
-    branch?: string
+interface LeaderboardEntry {
+  rank: number
+  id: string
+  name: string
+  year: number
+  branch: string
+  cf_solved: number | null
+  cc_solved: number | null
+  lc_solved: number | null
+  total_solved: number
 }
-export async function getleaderboardData(filters:LeaderboardFilters){
-    await new Promise(resolve=>setTimeout(resolve, 100))
-    let data = mockLeaderboardData
-    
-    if(filters.year){
-        data=data.filter(user=> user.year===filters.year)
-    }
 
-    if(filters.branch){
-        data=data.filter(user=> user.branch===filters.branch)
+interface LeaderboardFilters {
+  year?: number
+  branch?: string
+  platform?: string
+}
+
+export async function getleaderboardData(filters:LeaderboardFilters):Promise<LeaderboardEntry[]>{
+    await new Promise(resolve=>setTimeout(resolve, 100))
+    try{
+        let query=supabase
+                        .from('leaderboard_stats')
+                        .select('*')
+        if(filters.year){
+            query=query.eq('year',filters.year)
+        }
+
+        if(filters.branch){
+            query=query.eq('branch',filters.branch)
+        }
+        const sortColumn= filters.platform
+            ? `${filters.platform}`
+            : 'total_solved'
+        query.order(sortColumn, { ascending: false })
+
+        const {data, error} = await query
+        if(error){
+            console.error('Database error: ', error)
+            throw error
+        }
+        const entries= data?.map((user: any , index: number)=>({
+            rank: index+1,
+            id: user.id,
+            name: user.name,
+            year: user.year,
+            branch: user.branch,
+            cf_solved: user.cf_solved,
+            cc_solved: user.cc_solved,
+            lc_solved: user.lc_solved,
+            total_solved: user.total_solved
+        })) || []
+        return entries;
+    }catch(error){
+        console.error('Error fetching leaderboard ', error)
+        throw error
     }
-    data.sort((a,b)=>a.college_rank-b.college_rank)
-    return data;
 }

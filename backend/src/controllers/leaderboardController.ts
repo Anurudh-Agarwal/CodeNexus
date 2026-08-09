@@ -5,6 +5,8 @@ export async function getLeaderboard(req: Request, res: Response){
     try{
         const year=req.query.year? parseInt (req.query.year as string) : undefined
         const branch =req.query.branch as string | undefined
+        const platform= req.query.platform as string | undefined
+
         if(year && (year<0 || year>4)){
             return res.status(400).json({
                 success: false,
@@ -18,17 +20,27 @@ export async function getLeaderboard(req: Request, res: Response){
                 error:'Invalid branch'
             })
         }
-        const leaderboardData=await getleaderboardData({year, branch});
+        const validPlatform = ['codechef', 'codeforces', 'leetcode']
+        if(platform && !validPlatform.includes(platform)){
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid platform'
+            })
+        }
+        const leaderboardData=await getleaderboardData({year, branch, platform});
 
         res.status(200).json({
             success: true,
             data: {
                 entries: leaderboardData,
                 total_users: leaderboardData.length,
-                page: 1,
-                page_size: 50
-            },
-            timestamp: new Date().toISOString()
+                filtered_by:{
+                    year: year|| 'all',
+                    branch: branch|| 'all',
+                    platform: platform|| 'all',
+                },
+                sorted_by: platform? `${platform}_solved`: 'total_solved'
+                }
         })
     }catch(error){
         console.error('Leaderboard error:', error)
