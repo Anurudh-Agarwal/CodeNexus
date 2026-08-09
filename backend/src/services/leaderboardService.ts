@@ -31,10 +31,15 @@ export async function getleaderboardData(filters:LeaderboardFilters):Promise<Lea
         if(filters.branch){
             query=query.eq('branch',filters.branch)
         }
+        const platformColumnMap: Record<string, string> = {
+        codeforces: 'cf_solved',
+        leetcode: 'lc_solved',
+        codechef: 'cc_solved',
+        }
         const sortColumn= filters.platform
-            ? `${filters.platform}`
+            ? `${platformColumnMap[filters.platform]}`
             : 'total_solved'
-        query.order(sortColumn, { ascending: false })
+        query=query.order(sortColumn, { ascending: false })
 
         const {data, error} = await query
         if(error){
