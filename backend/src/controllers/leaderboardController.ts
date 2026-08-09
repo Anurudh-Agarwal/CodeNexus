@@ -1,5 +1,5 @@
 import { Request , Response } from 'express'
-import { getleaderboardData } from "../services/leaderboardService";
+import { getLeaderboardData } from '../services/leaderboardService'
 
 export async function getLeaderboard(req: Request, res: Response){
     try{
@@ -27,7 +27,7 @@ export async function getLeaderboard(req: Request, res: Response){
                 error: 'Invalid platform'
             })
         }
-        const leaderboardData=await getleaderboardData({year, branch, platform});
+        const leaderboardData=await getLeaderboardData({year, branch, platform});
 
         res.status(200).json({
             success: true,

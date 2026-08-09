@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabase"
+import { supabase } from '../lib/supabase'
 
 interface LeaderboardEntry {
   rank: number
@@ -18,48 +18,48 @@ interface LeaderboardFilters {
   platform?: string
 }
 
-export async function getleaderboardData(filters:LeaderboardFilters):Promise<LeaderboardEntry[]>{
-    await new Promise(resolve=>setTimeout(resolve, 100))
-    try{
-        let query=supabase
-                        .from('leaderboard_stats')
-                        .select('*')
-        if(filters.year){
-            query=query.eq('year',filters.year)
-        }
+export async function getLeaderboardData(filters: LeaderboardFilters): Promise<LeaderboardEntry[]> {
+  try {
+    let query = supabase
+      .from('leaderboard_stats')
+      .select('*')
 
-        if(filters.branch){
-            query=query.eq('branch',filters.branch)
-        }
-        const platformColumnMap: Record<string, string> = {
-        codeforces: 'cf_solved',
-        leetcode: 'lc_solved',
-        codechef: 'cc_solved',
-        }
-        const sortColumn= filters.platform
-            ? `${platformColumnMap[filters.platform]}`
-            : 'total_solved'
-        query=query.order(sortColumn, { ascending: false })
-
-        const {data, error} = await query
-        if(error){
-            console.error('Database error: ', error)
-            throw error
-        }
-        const entries= data?.map((user: any , index: number)=>({
-            rank: index+1,
-            id: user.id,
-            name: user.name,
-            year: user.year,
-            branch: user.branch,
-            cf_solved: user.cf_solved,
-            cc_solved: user.cc_solved,
-            lc_solved: user.lc_solved,
-            total_solved: user.total_solved
-        })) || []
-        return entries;
-    }catch(error){
-        console.error('Error fetching leaderboard ', error)
-        throw error
+    if (filters.year) {
+      query = query.eq('year', filters.year)
     }
+
+    if (filters.branch) {
+      query = query.eq('branch', filters.branch)
+    }
+
+    const sortColumn = filters.platform 
+      ? `${filters.platform}_solved`
+      : 'total_solved'
+
+    query = query.order(sortColumn, { ascending: false })
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error('Database error:', error)
+      throw error
+    }
+
+    const entries = data?.map((user: any, index: number) => ({
+      rank: index + 1,
+      id: user.id,
+      name: user.name,
+      year: user.year,
+      branch: user.branch,
+      cf_solved: user.cf_solved,
+      cc_solved: user.cc_solved,
+      lc_solved: user.lc_solved,
+      total_solved: user.total_solved
+    })) || []
+
+    return entries
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error)
+    throw error
+  }
 }
