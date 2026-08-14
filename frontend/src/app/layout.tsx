@@ -19,7 +19,7 @@ export default function RootLayout({
       <body className="bg-teal-50">
         <Navbar />
         <Sidebar />
-        <main className="pt-16 pb-20 lg:ml-18 lg:p-2 border-3 mt-22 rounded-2xl bg-white m-5">
+        <main className="pt-8 pb-20 lg:ml-18 lg:p-2 border-3 mt-22 rounded-2xl bg-white m-5">
           {children}
         </main>
         <BottomNav />
