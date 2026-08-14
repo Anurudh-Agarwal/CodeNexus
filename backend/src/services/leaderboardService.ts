@@ -32,8 +32,14 @@ export async function getLeaderboardData(filters: LeaderboardFilters): Promise<L
       query = query.eq('branch', filters.branch)
     }
 
+    const PLATFORM_COLUMN_MAP: Record<string, string> = {
+      codeforces: 'cf',
+      leetcode: 'lc',
+      codechef: 'cc'
+    }
+
     const sortColumn = filters.platform 
-      ? `${filters.platform}_solved`
+      ? `${PLATFORM_COLUMN_MAP[filters.platform]}_solved`
       : 'total_solved'
 
     query = query.order(sortColumn, { ascending: false })
