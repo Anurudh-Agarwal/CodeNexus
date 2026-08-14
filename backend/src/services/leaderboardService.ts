@@ -18,6 +18,12 @@ interface LeaderboardFilters {
   platform?: string
 }
 
+const PLATFORM_COLUMN_MAP: Record<string, string> = {
+  codeforces: 'cf',
+  leetcode: 'lc',
+  codechef: 'cc'
+}
+
 export async function getLeaderboardData(filters: LeaderboardFilters): Promise<LeaderboardEntry[]> {
   try {
     let query = supabase
@@ -32,15 +38,13 @@ export async function getLeaderboardData(filters: LeaderboardFilters): Promise<L
       query = query.eq('branch', filters.branch)
     }
 
-    const PLATFORM_COLUMN_MAP: Record<string, string> = {
-      codeforces: 'cf',
-      leetcode: 'lc',
-      codechef: 'cc'
+    let sortColumn = 'total_solved'
+    
+    if (filters.platform) {
+      const columnPrefix = PLATFORM_COLUMN_MAP[filters.platform]
+      sortColumn = `${columnPrefix}_solved`
+      query = query.not(sortColumn, 'is', null)
     }
-
-    const sortColumn = filters.platform 
-      ? `${PLATFORM_COLUMN_MAP[filters.platform]}_solved`
-      : 'total_solved'
 
     query = query.order(sortColumn, { ascending: false })
 
