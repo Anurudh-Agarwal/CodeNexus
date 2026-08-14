@@ -34,7 +34,7 @@ export default function Sidebar() {
     <aside
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
-      className={`hidden lg:flex fixed left-0 pt-50 h-screen bg-white flex-col p-1 z-50 transition-[width] duration-100 ease-in-out ${
+      className={`hidden lg:flex fixed left-0 pt-40 h-screen bg-teal-50 flex-col p-1 z-50 mt-0 transition-[width] duration-100 ease-in-out ${
         isHovered ? 'w-64' : 'w-16'
       }`}
     >
@@ -47,10 +47,10 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-colors overflow-hidden whitespace-nowrap ${
+              className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-colors overflow-hidden whitespace-nowrap bg-teal-100 ${
                 isActive
-                  ? 'bg-gray-100 text-black font-semibold'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-teal-200 text-black font-semibold'
+                  : 'text-gray-700 hover:bg-teal-200'
               }`}
             >
               <Icon size={26} className="shrink-0" strokeWidth={isActive ? 2.2 : 1.8} />
