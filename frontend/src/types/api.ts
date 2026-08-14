@@ -1,40 +1,45 @@
-import type User from "./user"
-import type { CPRating } from "./ratings"
-import type { Activity } from "./activity"
-import type { Message } from "./messages"
-
-
 /**
- * Generic API response wrapper.
+ * API Response types
  */
 
-interface ApiResponse<T> {
+import type User from './user'
+import type { CPRating, LeaderboardEntry } from './ratings'
+import type { Message } from './messages'
+import type { Activity, Notification } from './activity'
+
+// ============================================================================
+// GENERIC API RESPONSE
+// ============================================================================
+
+export interface ApiResponse<T = unknown> {
   success: boolean
   data?: T
   error?: string
   timestamp: string
 }
 
-// GET /api/leaderboard
-type LeaderboardResponse = ApiResponse<{
-  entries: Array<{
-    id: string
-    name: string
-    year: number
-    branch: string
-    cf_rating: number
-    lc_rating: number
-    cc_rating: number
-    college_rank: number
-    is_following: boolean
-  }>
+// ============================================================================
+// LEADERBOARD
+// ============================================================================
+
+export type LeaderboardResponse = ApiResponse<{
+  entries: LeaderboardEntry[]
   total_users: number
-  page: number
-  page_size: number
+  filtered_by: {
+    year: string | number
+    branch: string | number
+    platform: string
+  }
+  sorted_by: string
+  page?: number
+  page_size?: number
 }>
 
-// GET /api/profile/:id
-type ProfileResponse = ApiResponse<{
+// ============================================================================
+// PROFILE
+// ============================================================================
+
+export type ProfileResponse = ApiResponse<{
   user: User
   ratings: CPRating[]
   followers_count: number
@@ -43,30 +48,15 @@ type ProfileResponse = ApiResponse<{
   recent_activity: Activity[]
 }>
 
-// POST /api/messages
-type MessageResponse = ApiResponse<Message>
+// ============================================================================
+// MESSAGES
+// ============================================================================
 
-// GET /api/sync-status
-type SyncStatusResponse = ApiResponse<{
-  codeforces: {
-    synced: boolean
-    handle?: string
-    last_synced?: string
-  }
-  leetcode: {
-    synced: boolean
-    handle?: string
-    last_synced?: string
-  }
-  codechef: {
-    synced: boolean
-    handle?: string
-    last_synced?: string
-  }
+export type MessageResponse = ApiResponse<{
+  message: Message
 }>
 
-// GET /api/chat
-type ChatListResponse = ApiResponse<{
+export type ChatListResponse = ApiResponse<{
   conversations: Array<{
     id: string
     user_id: string
@@ -79,56 +69,66 @@ type ChatListResponse = ApiResponse<{
   total_count: number
 }>
 
-// GET /api/chat/:userId
-type ChatMessagesResponse = ApiResponse<{
+export type ChatMessagesResponse = ApiResponse<{
   messages: Message[]
   user: User
   total_count: number
   page: number
 }>
 
-// POST /api/follow/:userId
-type FollowResponse = ApiResponse<{
+// ============================================================================
+// SYNC STATUS
+// ============================================================================
+
+export type SyncStatusResponse = ApiResponse<{
+  synced_platforms: Array<{
+    platform: 'codeforces' | 'leetcode' | 'codechef'
+    synced: boolean
+    handle?: string
+    last_synced?: string
+    sync_error?: string
+  }>
+}>
+
+// ============================================================================
+// FOLLOW
+// ============================================================================
+
+export type FollowResponse = ApiResponse<{
   is_following: boolean
   followers_count: number
 }>
 
-// POST /api/auth/login
-type LoginResponse = ApiResponse<{
+// ============================================================================
+// AUTH
+// ============================================================================
+
+export type LoginResponse = ApiResponse<{
   user: User
-  token: string // JWT token
-  expires_in: number // Seconds
+  token: string
+  expires_in: number
 }>
 
-// GET /api/notifications
-type NotificationsResponse = ApiResponse<{
-  notifications: Array<{
-    id: string
-    type: "message" | "follower" | "contest"
-    title: string
-    description: string
-    is_read: boolean
-    created_at: string
-  }>
+export type SignupResponse = ApiResponse<{
+  user: User
+  token: string
+  expires_in: number
+}>
+
+// ============================================================================
+// NOTIFICATIONS
+// ============================================================================
+
+export type NotificationsResponse = ApiResponse<{
+  notifications: Notification[]
   unread_count: number
 }>
 
-// Error response
-interface ErrorResponse extends ApiResponse<null> {
+// ============================================================================
+// ERROR
+// ============================================================================
+
+export type ErrorResponse = ApiResponse<null> & {
   success: false
   error: string
-}
-
-export type {
-  ApiResponse,
-  LeaderboardResponse,
-  ProfileResponse,
-  MessageResponse,
-  SyncStatusResponse,
-  ChatListResponse,
-  ChatMessagesResponse,
-  FollowResponse,
-  LoginResponse,
-  NotificationsResponse,
-  ErrorResponse
 }

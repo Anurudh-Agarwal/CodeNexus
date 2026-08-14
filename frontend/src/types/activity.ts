@@ -1,32 +1,43 @@
 /**
- * Represents an action performed by a user on CodeNexus.
+ * User activity and notifications
  */
-type ActionType =
-  | "rating_change"
-  | "contest_participated"
-  | "rank_change"
-  | "problem_solved"
 
-interface Activity {
+export type ActivityType = 
+  | 'rating_change'
+  | 'contest_participated'
+  | 'rank_change'
+  | 'problem_solved'
+  | 'streak_update'
+  | 'profile_view'
+
+export interface Activity {
   id: string
   user_id: string
-
-  action: ActionType
-  platform: "codeforces" | "leetcode" | "codechef"
-
-  old_rating?: number
-  new_rating?: number
-
-  problem_title?: string
-  problem_url?: string
-
+  type: ActivityType
+  platform?: 'codeforces' | 'leetcode' | 'codechef'
+  old_value?: number
+  new_value?: number
   contest_name?: string
-  contest_url?: string
-
-  old_rank?: number
-  new_rank?: number
-
-  timestamp: string
+  problem_name?: string
+  description: string
+  created_at: string
 }
 
-export type { Activity }
+export type NotificationType = 
+  | 'message'
+  | 'follower'
+  | 'contest'
+  | 'rank_change'
+  | 'rating_update'
+
+export interface Notification {
+  id: string
+  user_id: string
+  type: NotificationType
+  title: string
+  description: string
+  is_read: boolean
+  related_user_id?: string
+  related_id?: string
+  created_at: string
+}
