@@ -20,11 +20,13 @@ const apiCall=async<T>(
 
 export const getLeaderboard=async(filters?:{
     year?:number, 
-    branch?: string
+    branch?: string,
+    platform?:string
 }): Promise<LeaderboardResponse>=>{
     const params=new URLSearchParams()
     if(filters?.year) params.append('year', filters.year.toString());
     if(filters?.branch) params.append('branch', filters.branch);
+    if(filters?.platform) params.append('platform', filters.platform);
     const queryString=params.toString()
     const endpoint= `/api/leaderboard${queryString?`?${queryString}`:''}`
     return apiCall<LeaderboardResponse>(endpoint)
