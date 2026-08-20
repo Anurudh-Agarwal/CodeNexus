@@ -49,12 +49,12 @@ export async function signUp(req: Request, res: Response) {
 
 export async function verifyOtp(req: Request, res: Response) {
   try {
-    const { email, token, name, password, year, branch } = req.body;
+    const { email, token, name, year, branch } = req.body;
 
-    if (!email || !token) {
+    if (!email || !token || !name || !year || !branch) {
       return res.status(400).json({
         success: false,
-        error: "Email and OTP token required",
+        error: "Email, OTP, name, year, and branch are required",
       });
     }
 
@@ -62,7 +62,6 @@ export async function verifyOtp(req: Request, res: Response) {
       email,
       token,
       name,
-      password,
       year,
       branch,
     });
@@ -104,44 +103,46 @@ export async function logIn(req: Request, res: Response) {
       },
     });
   } catch (err: any) {
-    console.log('SignUp error:', err)
-    
-    if (err.code === '23505') {
-        return res.status(400).json({
-            success: false,
-            error: 'Email already registered. Please login instead.'
-        })
+    console.log("SignUp error:", err);
+
+    if (err.code === "23505") {
+      return res.status(400).json({
+        success: false,
+        error: "Email already registered. Please login instead.",
+      });
     }
-    
-    if (err.code === 'email_exists') {
-        return res.status(400).json({
-            success: false,
-            error: 'Email already registered. Please login instead.'
-        })
+
+    if (err.code === "email_exists") {
+      return res.status(400).json({
+        success: false,
+        error: "Email already registered. Please login instead.",
+      });
     }
 
     res.status(500).json({
-        success: false,
-        error: err.message || 'SignUp failed'
-    })
-}
+      success: false,
+      error: err.message || "SignUp failed",
+    });
+  }
 }
 
 export async function forgotPassword(req: Request, res: Response) {
-    try {
-        const { email } = req.body
+  try {
+    const { email } = req.body;
 
-        if (!email) {
-            return res.status(400).json({ success: false, error: 'Email required' })
-        }
-
-        const { error } = await supabase.auth.signInWithOtp({ email })
-
-        if (error) throw error
-
-        res.status(200).json({ success: true, message: 'OTP sent to email' })
-    } catch (err: any) {
-        console.log('Forgot password error:', err)
-        res.status(500).json({ success: false, error: err.message || 'Failed to send OTP' })
+    if (!email) {
+      return res.status(400).json({ success: false, error: "Email required" });
     }
+
+    const { error } = await supabase.auth.signInWithOtp({ email });
+
+    if (error) throw error;
+
+    res.status(200).json({ success: true, message: "OTP sent to email" });
+  } catch (err: any) {
+    console.log("Forgot password error:", err);
+    res
+      .status(500)
+      .json({ success: false, error: err.message || "Failed to send OTP" });
+  }
 }

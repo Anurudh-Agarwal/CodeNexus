@@ -1,34 +1,39 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { useAuth } from '@/hooks/useAuth'
-import { useRouter } from 'next/navigation'
+import { useState } from "react";
+import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
-const BRANCHES = ['CSE-R', 'CSE-AI', 'CSE-SF', 'ECE', 'EE', 'ME', 'CE', 'CHE']
+const BRANCHES = ["CSE-R", "CSE-AI", "CSE-SF", "ECE", "EE", "ME", "CE", "CHE"];
 
 export default function SignupPage() {
-  const { signUp, isLoading, error, clearError } = useAuth()
+  const { signUp, isLoading, error, clearError } = useAuth();
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
-  const [year, setYear] = useState('2')
-  const [branch, setBranch] = useState('CSE-R')
-  const router=useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [year, setYear] = useState("2");
+  const [branch, setBranch] = useState("CSE-R");
+  const router = useRouter();
 
-async function handleSubmit(e: React.SubmitEvent) {
-    e.preventDefault()
-    clearError()
+  async function handleSubmit(e: React.SubmitEvent) {
+    e.preventDefault();
+    clearError();
     try {
-        await signUp({ email, password, name, year: parseInt(year), branch })
-        sessionStorage.setItem('signupData', JSON.stringify({
-            email, password, name, year,branch
-        }))
-        router.push('/verify-otp')
-    } catch {
-    }   
-}
+      await signUp({ email, password, name, year: parseInt(year), branch });
+      sessionStorage.setItem(
+        "signupData",
+        JSON.stringify({
+          email,
+          name,
+          year,
+          branch,
+        }),
+      );
+      router.push("/verify-otp");
+    } catch {}
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
@@ -88,7 +93,9 @@ async function handleSubmit(e: React.SubmitEvent) {
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {[1, 2, 3, 4].map((y) => (
-                  <option key={y} value={y}>Year {y}</option>
+                  <option key={y} value={y}>
+                    Year {y}
+                  </option>
                 ))}
               </select>
             </div>
@@ -101,7 +108,9 @@ async function handleSubmit(e: React.SubmitEvent) {
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {BRANCHES.map((b) => (
-                  <option key={b} value={b}>{b}</option>
+                  <option key={b} value={b}>
+                    {b}
+                  </option>
                 ))}
               </select>
             </div>
@@ -112,17 +121,17 @@ async function handleSubmit(e: React.SubmitEvent) {
             disabled={isLoading}
             className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
           >
-            {isLoading ? 'Signing up...' : 'Sign Up'}
+            {isLoading ? "Signing up..." : "Sign Up"}
           </button>
         </form>
 
         <p className="text-center mt-4 text-sm">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <Link href="/login" className="text-blue-600 hover:underline">
             Login
           </Link>
         </p>
       </div>
     </div>
-  )
+  );
 }

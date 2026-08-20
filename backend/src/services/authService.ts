@@ -17,7 +17,6 @@ interface VerifyOtpData {
   email: string;
   token: string;
   name: string;
-  password: string;
   year?: string;
   branch?: string;
 }

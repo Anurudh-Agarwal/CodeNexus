@@ -7,7 +7,6 @@ import { verifyOtp } from "@/lib/api";
 type SignupData = {
   email: string;
   name: string;
-  password: string;
   year: string;
   branch: string;
 };
@@ -59,7 +58,6 @@ export default function VerifyOtpPage() {
         email: userData.email,
         token: otp,
         name: userData.name,
-        password: userData.password,
         year: parseInt(userData.year, 10),
         branch: userData.branch,
       });

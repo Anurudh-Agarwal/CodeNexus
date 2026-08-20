@@ -68,7 +68,6 @@ export const verifyOtp = async (data: {
   email: string;
   token: string;
   name: string;
-  password: string;
   year?: number;
   branch?: string;
 }) => {
