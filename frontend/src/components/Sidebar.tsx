@@ -1,44 +1,37 @@
 'use client'
+
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Trophy, MessageCircle, User, Settings } from 'lucide-react'
+import { Home, Trophy, MessageCircle, Settings } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { LogOut } from 'lucide-react'
 
 const navItems = [
   { icon: Home, label: 'Home', href: '/' },
   { icon: Trophy, label: 'Leaderboard', href: '/leaderboard' },
   { icon: MessageCircle, label: 'Chat', href: '/chat' },
-  { icon: User, label: 'Profile', href: '/profile/me' },
-  { icon: Settings, label: 'Settings', href: '/settings' },
 ]
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const { user , logOut} = useAuth()
   const [isHovered, setIsHovered] = useState(false)
 
-  const [prevPathname, setPrevPathname] = useState(pathname)
-  if (prevPathname !== pathname) {  
-    setPrevPathname(pathname)
-    if (isHovered) setIsHovered(false)
-  }
-
-  const handleEnter = () => {
-    setIsHovered(true)
-  }
-
-  const handleLeave = () => {
-      setIsHovered(false)
-  }
+  const profileHref = user ? `/profile/${user.id}` : '/login'
+  const isProfileActive = pathname === profileHref
+  const isSettingsActive = pathname === '/settings'
 
   return (
     <aside
-      onMouseEnter={handleEnter}
-      onMouseLeave={handleLeave}
-      className={`hidden lg:flex fixed left-0 pt-40 h-screen bg-teal-50 flex-col p-1 z-50 mt-0 transition-[width] duration-100 ease-in-out ${
-        isHovered ? 'w-64' : 'w-16'
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`hidden lg:flex fixed left-0 top-16 bottom-0 bg-background border-r border-border flex-col justify-between py-6 z-40 transition-[width] duration-150 ease-in-out ${
+        isHovered ? 'w-64 px-3' : 'w-16 px-2'
       }`}
     >
-      <nav className="flex-1 space-y-5">
+      <nav className="flex flex-col gap-1">
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href
@@ -47,16 +40,14 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-colors overflow-hidden whitespace-nowrap bg-teal-100 ${
-                isActive
-                  ? 'bg-teal-200 text-black font-semibold'
-                  : 'text-gray-700 hover:bg-teal-200'
+              className={`flex items-center gap-4 px-3 py-3 rounded-xl overflow-hidden whitespace-nowrap transition-colors ${
+                isActive ? 'font-semibold text-foreground' : 'text-muted-foreground hover:bg-muted'
               }`}
             >
-              <Icon size={26} className="shrink-0" strokeWidth={isActive ? 2.2 : 1.8} />
+              <Icon size={26} className="shrink-0" strokeWidth={isActive ? 2.4 : 1.8} />
               <span
-                className={`text-base transition-opacity duration-200 ${
-                  isHovered ? 'opacity-100 delay-100' : 'opacity-0'
+                className={`text-sm transition-opacity duration-150 ${
+                  isHovered ? 'opacity-100 delay-75' : 'opacity-0'
                 }`}
               >
                 {item.label}
@@ -64,6 +55,52 @@ export default function Sidebar() {
             </Link>
           )
         })}
+      </nav>
+
+      <nav className="flex flex-col gap-1">
+        <Link
+          href={profileHref}
+          className={`flex items-center gap-4 px-3 py-3 rounded-xl overflow-hidden whitespace-nowrap transition-colors ${
+            isProfileActive ? 'font-semibold text-foreground' : 'text-muted-foreground hover:bg-muted'
+          }`}
+        >
+          <Avatar size="sm" className="shrink-0">
+            <AvatarImage src={user?.avatar_url} alt={user?.name ?? 'Profile'} />
+            <AvatarFallback>{user?.name?.[0]?.toUpperCase() ?? '?'}</AvatarFallback>
+          </Avatar>
+          <span
+            className={`text-sm transition-opacity duration-150 ${
+              isHovered ? 'opacity-100 delay-75' : 'opacity-0'
+            }`}
+          >
+            Profile
+          </span>
+        </Link>
+
+        <Link
+          href="/settings"
+          className={`flex items-center gap-4 px-3 py-3 rounded-xl overflow-hidden whitespace-nowrap transition-colors ${
+            isSettingsActive ? 'font-semibold text-foreground' : 'text-muted-foreground hover:bg-muted'
+          }`}
+        >
+          <Settings size={26} className="shrink-0" strokeWidth={isSettingsActive ? 2.4 : 1.8} />
+          <span
+            className={`text-sm transition-opacity duration-150 ${
+              isHovered ? 'opacity-100 delay-75' : 'opacity-0'
+            }`}
+          >
+            Settings
+          </span>
+        </Link>
+        <button
+  onClick={logOut}
+  className="flex items-center gap-4 px-3 py-3 rounded-xl overflow-hidden whitespace-nowrap transition-colors text-muted-foreground hover:bg-muted w-full"
+>
+  <LogOut size={26} className="shrink-0" strokeWidth={1.8} />
+  <span className={`text-sm transition-opacity duration-150 ${isHovered ? 'opacity-100 delay-75' : 'opacity-0'}`}>
+    Logout
+  </span>
+</button>
       </nav>
     </aside>
   )

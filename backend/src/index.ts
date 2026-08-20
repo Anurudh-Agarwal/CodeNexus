@@ -12,7 +12,10 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://code-nexus-ten.vercel.app'
 ]
-
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`)
+  next()
+})
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true)
@@ -49,4 +52,11 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`)
+})
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled rejection:', err)
+})
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception:', err)
 })

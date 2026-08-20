@@ -16,11 +16,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-teal-50">
+      <body className="bg-background text-foreground">
         <Navbar />
         <Sidebar />
-        <main className="pt-8 pb-20 lg:ml-18 lg:p-2 border-3 mt-22 rounded-2xl bg-white m-5">
-          {children}
+        <main className="pt-16 pb-14 lg:pb-6 lg:pl-16">
+          <div className="max-w-2xl mx-auto px-4 py-6">
+            {children}
+          </div>
         </main>
         <BottomNav />
       </body>

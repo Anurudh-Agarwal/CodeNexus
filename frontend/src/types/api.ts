@@ -103,6 +103,19 @@ export type FollowResponse = ApiResponse<{
 // AUTH
 // ============================================================================
 
+export interface SignupRequest {
+  email: string
+  password: string
+  name: string
+  year: number
+  branch: string
+}
+
+export interface LoginRequest {
+  email: string
+  password: string
+}
+
 export type LoginResponse = ApiResponse<{
   user: User
   token: string

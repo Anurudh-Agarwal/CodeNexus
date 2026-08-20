@@ -75,7 +75,6 @@ export default function LeaderboardPage() {
 
       {!loading && !error && entries.length > 0 && (
         <>
-          {/* DESKTOP: full table, hidden below md */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full border-collapse border border-black">
               <thead className="bg-teal-200">

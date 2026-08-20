@@ -34,6 +34,8 @@ export type {
   FollowResponse,
   LoginResponse,
   SignupResponse,
+  LoginRequest,
+  SignupRequest,
   NotificationsResponse,
   ErrorResponse
 } from './api'
