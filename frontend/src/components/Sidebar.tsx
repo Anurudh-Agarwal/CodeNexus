@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation'
 import { Home, Trophy, MessageCircle, Settings } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { LogOut } from 'lucide-react'
 
 const navItems = [
   { icon: Home, label: 'Home', href: '/' },
@@ -16,7 +15,7 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname()
-  const { user , logOut} = useAuth()
+  const { user } = useAuth()
   const [isHovered, setIsHovered] = useState(false)
 
   const profileHref = user ? `/profile/${user.id}` : '/login'
@@ -92,15 +91,6 @@ export default function Sidebar() {
             Settings
           </span>
         </Link>
-        <button
-  onClick={logOut}
-  className="flex items-center gap-4 px-3 py-3 rounded-xl overflow-hidden whitespace-nowrap transition-colors text-muted-foreground hover:bg-muted w-full"
->
-  <LogOut size={26} className="shrink-0" strokeWidth={1.8} />
-  <span className={`text-sm transition-opacity duration-150 ${isHovered ? 'opacity-100 delay-75' : 'opacity-0'}`}>
-    Logout
-  </span>
-</button>
       </nav>
     </aside>
   )
