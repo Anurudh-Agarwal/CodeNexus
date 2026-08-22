@@ -2,12 +2,14 @@ import {
   LeaderboardResponse,
   LoginRequest,
   LoginResponse,
+  ProfileResponse,
   SignupRequest,
   SignupResponse,
 } from "@/types";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "https://codenexus-lg9o.onrender.com";
+// const API_BASE_URL =
+//   process.env.NEXT_PUBLIC_BACKEND_URL || "https://codenexus-lg9o.onrender.com";
+const API_BASE_URL= "http://localhost:5000";
 
 const apiCall = async <T>(
   endpoint: string,
@@ -83,3 +85,7 @@ export const forgotPassword = async (email: string) => {
     body: JSON.stringify({ email }),
   });
 };
+
+export const getUser=async (userId: string): Promise<ProfileResponse> =>{
+  return apiCall<ProfileResponse>(`/api/users/${userId}`);
+}

@@ -3,6 +3,7 @@
 import { useLeaderboard } from '@/hooks/useLeaderboard'
 import { useState } from 'react'
 import { LeaderboardFilters } from '@/types'
+import Link from 'next/link'
 
 type PlatformKey = 'codechef' | 'codeforces' | 'leetcode'
 
@@ -104,7 +105,11 @@ export default function LeaderboardPage() {
                 {entries.map((entry) => (
                   <tr key={entry.id} className="hover:bg-gray-50">
                     <td className="border p-3 font-bold">{entry.rank}</td>
-                    <td className="border p-3">{entry.name}</td>
+                    <td className="border p-3">
+                      <Link href={`/profile/${entry.id}`} className="hover:underline">
+                        {entry.name}
+                      </Link>
+                    </td>
                     <td className="border p-3">{entry.year}</td>
                     <td className="border p-3">{entry.branch}</td>
 
@@ -133,7 +138,9 @@ export default function LeaderboardPage() {
               <div key={entry.id} className="border rounded-lg p-4 bg-white shadow-sm">
                 <div className="flex items-baseline gap-2 mb-1">
                   <span className="text-xl font-bold text-blue-600">#{entry.rank}</span>
-                  <span className="font-semibold">{entry.name}</span>
+                  <Link href={`/profile/${entry.id}`} className="font-semibold hover:underline">
+                    {entry.name}
+                  </Link>
                 </div>
                 <div className="text-xs text-gray-600 mb-3">
                   Year {entry.year} • {entry.branch}

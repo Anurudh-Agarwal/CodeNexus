@@ -4,6 +4,7 @@ import express from 'express'
 import cors from 'cors'
 import leaderboardRoutes from './routes/leaderboard'
 import authRoutes from './routes/auth'
+import userRoutes from './routes/users'
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -41,6 +42,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api/leaderboard', leaderboardRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api/users', userRoutes)
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err)
