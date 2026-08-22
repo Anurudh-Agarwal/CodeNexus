@@ -19,6 +19,7 @@ export default function Sidebar() {
   const [isHovered, setIsHovered] = useState(false)
 
   const profileHref = user ? `/profile/${user.id}` : '/login'
+  const settingsHref = user? '/settings': '/login'
   const isProfileActive = pathname === profileHref
   const isSettingsActive = pathname === '/settings'
 
@@ -77,7 +78,7 @@ export default function Sidebar() {
         </Link>
 
         <Link
-          href="/settings"
+          href={settingsHref}
           className={`flex items-center gap-4 px-3 py-3 rounded-xl overflow-hidden whitespace-nowrap transition-colors ${
             isSettingsActive ? 'font-semibold text-foreground' : 'text-muted-foreground hover:bg-muted'
           }`}

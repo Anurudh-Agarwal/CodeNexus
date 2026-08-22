@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRequireAuth } from "@/hooks/useRequireAuth";
-import LoginPage from "../(auth)/login/page";
 import {
   ChevronRight,
   User,
@@ -30,11 +28,6 @@ function SettingsRow({
   label: string;
   description?: string;
 }) {
-
-    const { user, isLoading }= useRequireAuth();
-    
-    if (isLoading) return <div className="text-center p-8">Loading...</div>;
-    if (!user) return <LoginPage />;
 
   return (
     <Link
