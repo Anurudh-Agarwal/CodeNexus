@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore, useState } from "react";
 import { LoginRequest, SignupRequest, User } from "@/types";
 import { useRouter } from "next/navigation";
 import {
@@ -20,39 +20,32 @@ interface useAuthReturn {
   clearError: () => void;
 }
 
-function getInitialUser(): User | null {
-  if (typeof window === "undefined") return null;
-
-  try {
-    const userData = localStorage.getItem("user");
-    localStorage.removeItem("token");
-    return userData ? JSON.parse(userData) : null;
-  } catch {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    return null;
-  }
+function getStoredUserSnapshot(): string | null {
+  return localStorage.getItem("user");
 }
 
 export function useAuth(): useAuthReturn {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(getInitialUser);
+  const storedUser = useSyncExternalStore(
+    (onStoreChange) => {
+      window.addEventListener("authChange", onStoreChange);
+      window.addEventListener("storage", onStoreChange);
+      return () => {
+        window.removeEventListener("authChange", onStoreChange);
+        window.removeEventListener("storage", onStoreChange);
+      };
+    },
+    getStoredUserSnapshot,
+    () => null,
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    function syncUser() {
-      setUser(getInitialUser());
-    }
-
-    window.addEventListener("authChange", syncUser);
-    window.addEventListener("storage", syncUser);
-
-    return () => {
-      window.removeEventListener("authChange", syncUser);
-      window.removeEventListener("storage", syncUser);
-    };
-  }, []);
+  let user: User | null = null;
+  try {
+    user = storedUser ? JSON.parse(storedUser) : null;
+  } catch {
+    localStorage.removeItem("user");
+  }
 
   const logIn = useCallback(
     async (data: LoginRequest) => {
@@ -65,7 +58,6 @@ export function useAuth(): useAuthReturn {
           throw new Error(response.error || "Login failed");
         }
         localStorage.setItem("user", JSON.stringify(response.data.user));
-        setUser(response.data.user);
         window.dispatchEvent(new Event("authChange"));
 
         router.push("/");
@@ -95,7 +87,6 @@ export function useAuth(): useAuthReturn {
           throw new Error(response.error || "SignUp failed");
         }
         localStorage.setItem("user", JSON.stringify(response.data.user));
-        setUser(response.data.user);
         window.dispatchEvent(new Event("authChange"));
 
         router.push("/");
@@ -114,7 +105,6 @@ export function useAuth(): useAuthReturn {
     await logoutApi();
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    setUser(null);
     window.dispatchEvent(new Event("authChange"));
     router.push("/login");
   }, [router]);

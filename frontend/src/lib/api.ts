@@ -7,9 +7,12 @@ import {
   SignupResponse,
   CodeforcesSyncStatusResponse,
 } from "@/types";
-import { RequestVerificationResponse, SyncCodeforcesResponse } from "@/types/api";
+import {
+  RequestVerificationResponse,
+  SyncCodeforcesResponse,
+} from "@/types/api";
 
-const API_BASE_URL ="http://localhost:5000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const apiCall = async <T>(
   endpoint: string,
@@ -27,6 +30,11 @@ const apiCall = async <T>(
 
     const data = response.status === 204 ? undefined : await response.json();
     if (!response.ok) {
+      if (response.status === 401 && typeof window !== "undefined") {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        window.dispatchEvent(new Event("authChange"));
+      }
       const message =
         data && typeof data === "object" && "error" in data
           ? String(data.error)
@@ -88,22 +96,24 @@ export const getUser = async (userId: string): Promise<ProfileResponse> => {
   return apiCall<ProfileResponse>(`/api/users/${userId}`);
 };
 
-export const requestCodeforcesVerification = async (handle: string)=>{
+export const requestCodeforcesVerification = async (handle: string) => {
   return apiCall<RequestVerificationResponse>("/api/sync/codeforces/request", {
-    method: 'POST',
-    body: JSON.stringify({handle})
-  })
-}
+    method: "POST",
+    body: JSON.stringify({ handle }),
+  });
+};
 
-export const verifyCodeforcesSync= async ()=>{
+export const verifyCodeforcesSync = async () => {
   return apiCall<SyncCodeforcesResponse>("/api/sync/codeforces/verify", {
-    method: 'POST'
-  })
-}
+    method: "POST",
+  });
+};
 export const getCodeforcesSyncStatus = async () => {
-  return apiCall<CodeforcesSyncStatusResponse>('/api/sync/codeforces/status')
-}
+  return apiCall<CodeforcesSyncStatusResponse>("/api/sync/codeforces/status");
+};
 
 export const refreshCodeforcesSync = async () => {
-  return apiCall<SyncCodeforcesResponse>('/api/sync/codeforces/refresh', { method: 'POST' })
-}
+  return apiCall<SyncCodeforcesResponse>("/api/sync/codeforces/refresh", {
+    method: "POST",
+  });
+};
