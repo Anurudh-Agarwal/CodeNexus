@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabase";
+import { supabaseAuth } from "../lib/supabase";
 import {
   registerUser,
   loginUser,
@@ -141,7 +141,7 @@ export async function forgotPassword(req: Request, res: Response) {
       return res.status(400).json({ success: false, error: "Email required" });
     }
 
-    const { error } = await supabase.auth.signInWithOtp({ email });
+    const { error } = await supabaseAuth.auth.signInWithOtp({ email });
 
     if (error) throw error;
 

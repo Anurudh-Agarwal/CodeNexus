@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { supabase } from "../lib/supabase";
+import { supabaseAuth } from "../lib/supabase";
 
 declare global {
   namespace Express {
@@ -70,7 +70,7 @@ export async function requireAuth(
     return;
   }
 
-  const { data, error } = await supabase.auth.getUser(token);
+  const { data, error } = await supabaseAuth.auth.getUser(token);
   if (error || !data.user) {
     res
       .status(401)

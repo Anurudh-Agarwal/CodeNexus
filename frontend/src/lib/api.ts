@@ -10,9 +10,14 @@ import {
 import {
   RequestVerificationResponse,
   SyncCodeforcesResponse,
+  LeetCodeSyncStatusResponse,
+  SyncLeetCodeResponse,
+  CodeChefSyncStatusResponse,
+  SyncCodeChefResponse,
 } from "@/types/api";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+// const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const API_BASE_URL = "http://localhost:5000";
 
 const apiCall = async <T>(
   endpoint: string,
@@ -117,3 +122,40 @@ export const refreshCodeforcesSync = async () => {
     method: "POST",
   });
 };
+
+export const requestLeetCodeVerification = async (handle: string) =>
+  apiCall<RequestVerificationResponse>("/api/sync/leetcode/request", {
+    method: "POST",
+    body: JSON.stringify({ handle }),
+  });
+
+export const verifyLeetCodeSync = async () =>
+  apiCall<SyncLeetCodeResponse>("/api/sync/leetcode/verify", {
+    method: "POST",
+  });
+
+export const getLeetCodeSyncStatus = async () =>
+  apiCall<LeetCodeSyncStatusResponse>("/api/sync/leetcode/status");
+
+export const refreshLeetCodeSync = async () =>
+  apiCall<SyncLeetCodeResponse>("/api/sync/leetcode/refresh", {
+    method: "POST",
+  });
+export const requestCodeChefVerification = async (handle: string) =>
+  apiCall<RequestVerificationResponse>("/api/sync/codechef/request", {
+    method: "POST",
+    body: JSON.stringify({ handle }),
+  });
+
+export const verifyCodeChefSync = async () =>
+  apiCall<SyncCodeChefResponse>("/api/sync/codechef/verify", {
+    method: "POST",
+  });
+
+export const getCodeChefSyncStatus = async () =>
+  apiCall<CodeChefSyncStatusResponse>("/api/sync/codechef/status");
+
+export const refreshCodeChefSync = async () =>
+  apiCall<SyncCodeChefResponse>("/api/sync/codechef/refresh", {
+    method: "POST",
+  });

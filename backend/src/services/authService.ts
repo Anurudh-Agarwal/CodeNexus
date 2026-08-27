@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabase";
+import { supabase, supabaseAuth } from "../lib/supabase";
 
 interface SignUpData {
   email: string;
@@ -22,7 +22,7 @@ interface VerifyOtpData {
 }
 
 export async function registerUser(data: SignUpData) {
-  const { data: authData, error: authError } = await supabase.auth.signUp({
+  const { data: authData, error: authError } = await supabaseAuth.auth.signUp({
     email: data.email,
     password: data.password,
   });
@@ -37,11 +37,13 @@ export async function registerUser(data: SignUpData) {
 
 export async function verifyOtpAndCreateProfile(data: VerifyOtpData) {
   console.log("data:", data);
-  const { data: authData, error: otpError } = await supabase.auth.verifyOtp({
-    email: data.email,
-    token: data.token,
-    type: "signup",
-  });
+  const { data: authData, error: otpError } = await supabaseAuth.auth.verifyOtp(
+    {
+      email: data.email,
+      token: data.token,
+      type: "signup",
+    },
+  );
 
   if (otpError) {
     console.log("there is an error bro", otpError);
@@ -71,7 +73,7 @@ export async function verifyOtpAndCreateProfile(data: VerifyOtpData) {
 
 export async function loginUser(data: LoginData) {
   const { data: authData, error: authError } =
-    await supabase.auth.signInWithPassword({
+    await supabaseAuth.auth.signInWithPassword({
       email: data.email,
       password: data.password,
     });
