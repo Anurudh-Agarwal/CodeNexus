@@ -5,6 +5,7 @@ import {
   verifyOtpAndCreateProfile,
 } from "../services/authService";
 import { Request, Response } from "express";
+import { clearSessionCookie, setSessionCookie } from "../middleware/auth";
 
 export async function signUp(req: Request, res: Response) {
   try {
@@ -66,11 +67,12 @@ export async function verifyOtp(req: Request, res: Response) {
       branch,
     });
 
+    if (result.token) setSessionCookie(res, result.token);
+
     res.status(200).json({
       success: true,
       data: {
         user: result.user,
-        token: result.token,
       },
     });
   } catch (err: any) {
@@ -94,12 +96,12 @@ export async function logIn(req: Request, res: Response) {
     }
 
     const result = await loginUser({ email, password });
+    setSessionCookie(res, result.token);
 
     res.status(200).json({
       success: true,
       data: {
         user: result.user,
-        token: result.token,
       },
     });
   } catch (err: any) {
@@ -124,6 +126,11 @@ export async function logIn(req: Request, res: Response) {
       error: err.message || "SignUp failed",
     });
   }
+}
+
+export function logOut(_req: Request, res: Response) {
+  clearSessionCookie(res);
+  res.status(204).send();
 }
 
 export async function forgotPassword(req: Request, res: Response) {

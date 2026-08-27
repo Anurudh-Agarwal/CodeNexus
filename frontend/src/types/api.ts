@@ -91,6 +91,44 @@ export type SyncStatusResponse = ApiResponse<{
 }>
 
 // ============================================================================
+// CODEFORCES SYNC
+// ============================================================================
+
+// The shape of a single row from the codeforces_stats table -- this is
+// the ONE canonical definition. The /status, /verify, and /refresh
+// endpoints all return data queried from this same table, so they all
+// reuse this type instead of three near-duplicate shapes that would
+// quietly drift apart over time.
+export interface CodeforcesSyncStatus {
+  handle: string
+  handle_verified: boolean
+  sync_status: 'pending' | 'synced' | 'error'
+  sync_error: string | null
+  last_synced: string | null
+  rating: number | null
+  rank: string | null
+  total_solved: number | null
+  monthly_solved: number | null
+  yearly_solved: number | null
+  current_streak: number | null
+  longest_streak: number | null
+}
+
+export type CodeforcesSyncStatusResponse = ApiResponse<CodeforcesSyncStatus | null>
+
+export type RequestVerificationResponse = ApiResponse<{
+  code: string
+  expiresAt: string
+  instructions: string
+}>
+
+export type SyncCodeforcesResponse = ApiResponse<{
+  platform: 'codeforces'
+  synced: boolean
+  stats: CodeforcesSyncStatus
+}>
+
+// ============================================================================
 // FOLLOW
 // ============================================================================
 

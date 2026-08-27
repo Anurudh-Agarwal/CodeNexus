@@ -5,33 +5,34 @@ import {
   ProfileResponse,
   SignupRequest,
   SignupResponse,
+  CodeforcesSyncStatusResponse,
 } from "@/types";
+import { RequestVerificationResponse, SyncCodeforcesResponse } from "@/types/api";
 
-// const API_BASE_URL =
-//   process.env.NEXT_PUBLIC_BACKEND_URL || "https://codenexus-lg9o.onrender.com";
-const API_BASE_URL= "http://localhost:5000";
+const API_BASE_URL ="http://localhost:5000";
 
 const apiCall = async <T>(
   endpoint: string,
   options: RequestInit = {},
 ): Promise<T> => {
   try {
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` }),
         ...options.headers,
       },
     });
 
+    const data = response.status === 204 ? undefined : await response.json();
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      const message =
+        data && typeof data === "object" && "error" in data
+          ? String(data.error)
+          : `API error: ${response.status}`;
+      throw new Error(message);
     }
-    const data = await response.json();
     return data;
   } catch (error) {
     console.error("API call failed:", error);
@@ -66,6 +67,10 @@ export const signup = async (data: SignupRequest) => {
     body: JSON.stringify(data),
   });
 };
+
+export const logout = async () => {
+  return apiCall<void>("/api/auth/logout", { method: "POST" });
+};
 export const verifyOtp = async (data: {
   email: string;
   token: string;
@@ -79,13 +84,26 @@ export const verifyOtp = async (data: {
   });
 };
 
-export const forgotPassword = async (email: string) => {
-  return apiCall("/api/auth/forgot-password", {
-    method: "POST",
-    body: JSON.stringify({ email }),
-  });
+export const getUser = async (userId: string): Promise<ProfileResponse> => {
+  return apiCall<ProfileResponse>(`/api/users/${userId}`);
 };
 
-export const getUser=async (userId: string): Promise<ProfileResponse> =>{
-  return apiCall<ProfileResponse>(`/api/users/${userId}`);
+export const requestCodeforcesVerification = async (handle: string)=>{
+  return apiCall<RequestVerificationResponse>("/api/sync/codeforces/request", {
+    method: 'POST',
+    body: JSON.stringify({handle})
+  })
+}
+
+export const verifyCodeforcesSync= async ()=>{
+  return apiCall<SyncCodeforcesResponse>("/api/sync/codeforces/verify", {
+    method: 'POST'
+  })
+}
+export const getCodeforcesSyncStatus = async () => {
+  return apiCall<CodeforcesSyncStatusResponse>('/api/sync/codeforces/status')
+}
+
+export const refreshCodeforcesSync = async () => {
+  return apiCall<SyncCodeforcesResponse>('/api/sync/codeforces/refresh', { method: 'POST' })
 }

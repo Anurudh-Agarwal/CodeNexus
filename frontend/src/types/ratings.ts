@@ -8,7 +8,7 @@ export interface CPRating {
   platform: 'codeforces' | 'leetcode' | 'codechef'
   handle: string
   rating?: number
-  rank?: number
+  rank?: string
   total_solved?: number
   monthly_solved?: number
   yearly_solved?: number

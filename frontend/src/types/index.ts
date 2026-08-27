@@ -31,6 +31,8 @@ export type {
   ChatListResponse,
   ChatMessagesResponse,
   SyncStatusResponse,
+  CodeforcesSyncStatusResponse,
+  CodeforcesSyncStatus,
   FollowResponse,
   LoginResponse,
   SignupResponse,

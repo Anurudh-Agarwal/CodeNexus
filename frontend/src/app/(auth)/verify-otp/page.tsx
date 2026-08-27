@@ -68,7 +68,6 @@ export default function VerifyOtpPage() {
 
       sessionStorage.removeItem("signupData");
 
-      localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
 
       window.dispatchEvent(new Event("authChange"));

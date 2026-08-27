@@ -59,7 +59,6 @@ export async function verifyOtpAndCreateProfile(data: VerifyOtpData) {
   });
 
   if (profileError) throw profileError;
-  console.log(authData.session?.access_token);
   return {
     user: {
       id: userId,

@@ -3,7 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { LoginRequest, SignupRequest, User } from "@/types";
 import { useRouter } from "next/navigation";
-import { login as loginApi, signup as SignupApi } from "@/lib/api";
+import {
+  login as loginApi,
+  logout as logoutApi,
+  signup as SignupApi,
+} from "@/lib/api";
 
 interface useAuthReturn {
   user: User | null;
@@ -21,6 +25,7 @@ function getInitialUser(): User | null {
 
   try {
     const userData = localStorage.getItem("user");
+    localStorage.removeItem("token");
     return userData ? JSON.parse(userData) : null;
   } catch {
     localStorage.removeItem("token");
@@ -59,7 +64,6 @@ export function useAuth(): useAuthReturn {
         if (!response.success || !response.data) {
           throw new Error(response.error || "Login failed");
         }
-        localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
         setUser(response.data.user);
         window.dispatchEvent(new Event("authChange"));
@@ -90,7 +94,6 @@ export function useAuth(): useAuthReturn {
         if (!response.success || !response.data) {
           throw new Error(response.error || "SignUp failed");
         }
-        localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
         setUser(response.data.user);
         window.dispatchEvent(new Event("authChange"));
@@ -108,6 +111,7 @@ export function useAuth(): useAuthReturn {
   );
 
   const logOut = useCallback(async () => {
+    await logoutApi();
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);

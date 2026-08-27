@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import LoginPage from "../(auth)/login/page";
 
 type IconType = typeof User;
 
@@ -53,7 +54,10 @@ function SettingsRow({
 }
 
 export default function SettingsPage() {
-  const { user, logOut } = useAuth();
+  const { user, logOut , isLoading} = useAuth();
+  
+  if (isLoading) return <div className="text-center p-8">Loading...</div>;
+    if (!user) return <LoginPage />;
 
   function handleLogout() {
     if (window.confirm("Are you sure you want to log out?")) {
