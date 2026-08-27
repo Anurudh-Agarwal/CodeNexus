@@ -13,7 +13,8 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
   "http://localhost:3000",
   "https://code-nexus-ten.vercel.app",
-];
+  process.env.FRONTEND_URL,
+].filter((origin): origin is string => Boolean(origin));
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();

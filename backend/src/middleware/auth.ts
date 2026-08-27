@@ -32,7 +32,9 @@ function getSessionToken(req: Request): string | null {
 }
 
 export function setSessionCookie(res: Response, token: string): void {
-  const secure = process.env.NODE_ENV === "production";
+  const secure =
+    process.env.NODE_ENV === "production" ||
+    process.env.FRONTEND_URL?.startsWith("https://");
   const attributes = [
     `${SESSION_COOKIE}=${encodeURIComponent(token)}`,
     "Path=/",
@@ -46,7 +48,9 @@ export function setSessionCookie(res: Response, token: string): void {
 }
 
 export function clearSessionCookie(res: Response): void {
-  const secure = process.env.NODE_ENV === "production";
+  const secure =
+    process.env.NODE_ENV === "production" ||
+    process.env.FRONTEND_URL?.startsWith("https://");
   const attributes = [
     `${SESSION_COOKIE}=`,
     "Path=/",
