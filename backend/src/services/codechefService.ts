@@ -29,7 +29,10 @@ async function fetchCodeChefProfilePage(
 
 export async function getCodeChefDisplayName(handle: string): Promise<string> {
   const $ = await fetchCodeChefProfilePage(handle);
-  return $("h1").first().text().trim();
+  const rawName= $("h1").first().text().trim();
+  return rawName
+    .replace(/^\d+\s*★\s*/, "")
+    .trim();
 }
 
 export async function fetchCodeChefStats(handle: string) {
