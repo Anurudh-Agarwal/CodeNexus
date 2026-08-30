@@ -1,5 +1,6 @@
 import { platform } from "node:os";
 import { supabase } from "../lib/supabase";
+import { getFollowStatus } from "./followService";
 
 interface ProfileResult{
     user: any 
@@ -10,7 +11,7 @@ interface ProfileResult{
     recent_activity: any[]
 }
 
-export async function fetchUserProfile(userId: string): Promise<ProfileResult| null>{
+export async function fetchUserProfile(userId: string, viewerId: string| null): Promise<ProfileResult| null>{
     const {data: user, error: userError }=await supabase
         .from('users')
         .select('*')
@@ -42,12 +43,13 @@ export async function fetchUserProfile(userId: string): Promise<ProfileResult| n
         ccResult.data && { ...ccResult.data, platform: 'codechef'}
     ].filter(Boolean)
 
+    const{ followers_count, following_count, is_following}= await getFollowStatus(viewerId, userId)
     return {
         user,
         ratings,
-        followers_count:0,
-        following_count:0,
-        is_following:false,
+        followers_count,
+        following_count,
+        is_following,
         recent_activity: [],
     }
 }

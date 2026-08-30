@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { fetchUserProfile } from "../services/userService";
+import { supabase } from "../lib/supabase";
 
 export async function getUserProfile(req: Request<{ userId: string }>, res: Response){
     try{
@@ -7,8 +8,14 @@ export async function getUserProfile(req: Request<{ userId: string }>, res: Resp
         if(!userId){
             return res.status(400).json({success:false, error: 'User ID is required'})
         }
-
-        const profile= await fetchUserProfile(userId)
+        const authHeader = req.headers.authorization
+        const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
+        let viewerId: string | null = null
+        if (token) {
+            const { data } = await supabase.auth.getUser(token)
+            viewerId = data.user?.id ?? null
+        }
+        const profile= await fetchUserProfile(userId, viewerId)
         
         if(!profile){
             return res.status(400).json({success: false, error: 'User not found'})
