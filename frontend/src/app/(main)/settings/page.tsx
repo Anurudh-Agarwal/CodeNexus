@@ -13,8 +13,8 @@ import {
   LogOut,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { Button } from "@/components/ui/button";
-import LoginPage from "../(auth)/login/page";
 
 type IconType = typeof User;
 
@@ -29,7 +29,6 @@ function SettingsRow({
   label: string;
   description?: string;
 }) {
-
   return (
     <Link
       href={href}
@@ -54,10 +53,11 @@ function SettingsRow({
 }
 
 export default function SettingsPage() {
-  const { user, logOut , isLoading} = useAuth();
-  
+  const { user, logOut } = useAuth();
+  const { isLoading } = useRequireAuth();
+
   if (isLoading) return <div className="text-center p-8">Loading...</div>;
-    if (!user) return <LoginPage />;
+  if (!user) return null;
 
   function handleLogout() {
     if (window.confirm("Are you sure you want to log out?")) {

@@ -1,4 +1,4 @@
-import { supabaseAuth } from "../lib/supabase";
+import { supabase, supabaseAuth } from "../lib/supabase";
 import {
   registerUser,
   loginUser,
@@ -131,6 +131,43 @@ export async function logIn(req: Request, res: Response) {
 export function logOut(_req: Request, res: Response) {
   clearSessionCookie(res);
   res.status(204).send();
+}
+
+export async function getCurrentUser(req: Request, res: Response) {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: "Authentication required",
+      });
+    }
+
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", userId)
+      .single();
+
+    if (error || !user) {
+      return res.status(401).json({
+        success: false,
+        error: "User session is invalid",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: { user },
+    });
+  } catch (err: any) {
+    console.error("Get current user error:", err);
+    res.status(500).json({
+      success: false,
+      error: err.message || "Failed to load current user",
+    });
+  }
 }
 
 export async function forgotPassword(req: Request, res: Response) {

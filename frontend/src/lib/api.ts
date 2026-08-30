@@ -1,4 +1,5 @@
 import {
+  ApiResponse,
   LeaderboardResponse,
   LoginRequest,
   LoginResponse,
@@ -6,6 +7,7 @@ import {
   SignupRequest,
   SignupResponse,
   CodeforcesSyncStatusResponse,
+  User,
 } from "@/types";
 import {
   RequestVerificationResponse,
@@ -16,8 +18,7 @@ import {
   SyncCodeChefResponse,
 } from "@/types/api";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const apiCall = async <T>(
   endpoint: string,
@@ -65,6 +66,12 @@ export const getLeaderboard = async (filters?: {
   const queryString = params.toString();
   const endpoint = `/api/leaderboard${queryString ? `?${queryString}` : ""}`;
   return apiCall<LeaderboardResponse>(endpoint);
+};
+
+export const getCurrentUser = async (): Promise<
+  ApiResponse<{ user: User }> | undefined
+> => {
+  return apiCall<ApiResponse<{ user: User }>>("/api/auth/me");
 };
 
 export const login = async (data: LoginRequest) => {

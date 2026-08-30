@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
-import LoginPage from "./(auth)/login/page";
 
 export default function HomePage() {
   const { user, isLoading } = useRequireAuth();
 
   if (isLoading) return <div className="text-center p-8">Loading...</div>;
-  if (!user) return <LoginPage />;
+
+  if (!user) {
+    return <div className="text-center p-8">Redirecting to login...</div>;
+  }
 
   return (
     <div className="p-8">

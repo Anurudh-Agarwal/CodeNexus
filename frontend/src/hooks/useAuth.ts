@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useSyncExternalStore, useState } from "react";
+import { useCallback, useEffect, useSyncExternalStore, useState } from "react";
 import { LoginRequest, SignupRequest, User } from "@/types";
 import { useRouter } from "next/navigation";
 import {
+  getCurrentUser,
   login as loginApi,
   logout as logoutApi,
   signup as SignupApi,
@@ -38,14 +39,44 @@ export function useAuth(): useAuthReturn {
     getStoredUserSnapshot,
     () => null,
   );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  let user: User | null = null;
-  try {
-    user = storedUser ? JSON.parse(storedUser) : null;
-  } catch {
-    localStorage.removeItem("user");
-  }
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch {
+      localStorage.removeItem("user");
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    const hydrateUser = async () => {
+      try {
+        const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+        if (parsedUser) {
+          setUser(parsedUser);
+        }
+
+        const response = await getCurrentUser();
+        if (response && response.success && response.data?.user) {
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+          setUser(response.data.user);
+          return;
+        }
+
+        localStorage.removeItem("user");
+        setUser(null);
+      } catch {
+        localStorage.removeItem("user");
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    hydrateUser();
+  }, [storedUser]);
 
   const logIn = useCallback(
     async (data: LoginRequest) => {
@@ -58,6 +89,7 @@ export function useAuth(): useAuthReturn {
           throw new Error(response.error || "Login failed");
         }
         localStorage.setItem("user", JSON.stringify(response.data.user));
+        setUser(response.data.user);
         window.dispatchEvent(new Event("authChange"));
 
         router.push("/");
@@ -87,6 +119,7 @@ export function useAuth(): useAuthReturn {
           throw new Error(response.error || "SignUp failed");
         }
         localStorage.setItem("user", JSON.stringify(response.data.user));
+        setUser(response.data.user);
         window.dispatchEvent(new Event("authChange"));
 
         router.push("/");
@@ -105,6 +138,7 @@ export function useAuth(): useAuthReturn {
     await logoutApi();
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    setUser(null);
     window.dispatchEvent(new Event("authChange"));
     router.push("/login");
   }, [router]);
