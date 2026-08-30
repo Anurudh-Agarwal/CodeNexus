@@ -29,10 +29,7 @@ async function fetchCodeChefProfilePage(
 
 export async function getCodeChefDisplayName(handle: string): Promise<string> {
   const $ = await fetchCodeChefProfilePage(handle);
-  const rawName= $("h1").first().text().trim();
-  return rawName
-    .replace(/^\d+\s*★\s*/, "")
-    .trim();
+  return $("h1").first().text().trim();
 }
 
 export async function fetchCodeChefStats(handle: string) {
@@ -45,11 +42,15 @@ export async function fetchCodeChefStats(handle: string) {
   const solved = Number.parseInt(solvedText, 10);
   const ratingText = $(".rating-number").first().text().trim();
   const rating = Number.parseInt(ratingText, 10);
-  const stars = $(".rating-star").first().text().trim();
+  const starsText = $(".rating-star").first().text().trim();
+
+  const rank = starsText
+  ? [...starsText].filter((char) => char === "★").length
+  : null;
 
   return {
-    rating: Number.isFinite(rating) ? rating : null,
-    rank: stars || null,
-    total_solved: Number.isFinite(solved) ? solved : 0,
+  rating: Number.isFinite(rating) ? rating : null,
+  rank,
+  total_solved: Number.isFinite(solved) ? solved : 0,
   };
 }
