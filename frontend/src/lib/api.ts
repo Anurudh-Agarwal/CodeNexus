@@ -18,7 +18,8 @@ import {
   SyncCodeChefResponse,
 } from "@/types/api";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+//const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const API_BASE_URL = "http://localhost:5000";
 
 const apiCall = async <T>(
   endpoint: string,
@@ -166,3 +167,15 @@ export const refreshCodeChefSync = async () =>
   apiCall<SyncCodeChefResponse>("/api/sync/codechef/refresh", {
     method: "POST",
   });
+
+export const followUser = async (userId: string) => {
+  return apiCall<ApiResponse<null>>(`/api/follows/${userId}`, {
+    method: "POST",
+  });
+};
+
+export const unfollowUser = async (userId: string) => {
+  return apiCall<ApiResponse<null>>(`/api/follows/${userId}`, {
+    method: "DELETE",
+  });
+};

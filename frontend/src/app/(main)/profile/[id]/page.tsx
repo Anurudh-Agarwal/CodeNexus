@@ -8,6 +8,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import type { PlatformRating } from "@/types";
+import { useFollow } from "@/hooks/useFollow";
 
 const PLATFORM_LABEL: Record<PlatformRating["platform"], string> = {
   codeforces: "Codeforces",
@@ -29,6 +30,8 @@ export default function ProfilePage() {
   const params = useParams<{ id: string }>();
   const { user: currentUser } = useAuth();
   const { profile, loading, error } = useUser(params.id);
+  const { isFollowing, followersCount, loading: followingLoading, toggle } =
+    useFollow(profile?.is_following, profile?.followers_count);
 
   const isOwnProfile = currentUser?.id === params.id;
 
@@ -51,7 +54,7 @@ export default function ProfilePage() {
     );
   }
 
-  const { user, ratings, followers_count, following_count } = profile;
+  const { user, ratings, following_count } = profile;
   const totalSolved = ratings.reduce(
     (sum, r) => sum + (r.total_solved || 0),
     0,
@@ -81,8 +84,17 @@ export default function ProfilePage() {
                 </Button>
               </Link>
             ) : (
-              <Button variant="default" size="sm" disabled title="Coming soon">
-                Follow
+              <Button
+                variant="default"
+                size="sm"
+                disabled={followingLoading}
+                onClick={() => toggle(user.id)}
+              >
+                {followingLoading
+                  ? "Please wait..."
+                  : isFollowing
+                    ? "Unfollow"
+                    : "Follow"}
               </Button>
             )}
           </div>
@@ -97,7 +109,7 @@ export default function ProfilePage() {
               <span className="text-muted-foreground">solved</span>
             </span>
             <span>
-              <strong>{followers_count}</strong>{" "}
+              <strong>{followersCount}</strong>{" "}
               <span className="text-muted-foreground">followers</span>
             </span>
             <span>
