@@ -29,9 +29,13 @@ function formatStat(value: number | null | undefined): string {
 export default function ProfilePage() {
   const params = useParams<{ id: string }>();
   const { user: currentUser } = useAuth();
-  const { profile, loading, error } = useUser(params.id);
-  const { isFollowing, followersCount, loading: followingLoading, toggle } =
-    useFollow(profile?.is_following, profile?.followers_count);
+  const { profile, loading, error, refetch } = useUser(params.id);
+  const {
+    isFollowing,
+    followersCount,
+    loading: followingLoading,
+    toggle,
+  } = useFollow(profile?.is_following, profile?.followers_count, refetch);
 
   const isOwnProfile = currentUser?.id === params.id;
 
@@ -85,7 +89,7 @@ export default function ProfilePage() {
               </Link>
             ) : (
               <Button
-                variant="default"
+                variant={isFollowing ? "outline" : "default"}
                 size="sm"
                 disabled={followingLoading}
                 onClick={() => toggle(user.id)}

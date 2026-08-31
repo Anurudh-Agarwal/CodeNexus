@@ -4,25 +4,33 @@ import { followUser, unfollowUser } from "@/lib/api";
 export function useFollow(
   initialIsFollowing?: boolean,
   initialFollowersCount?: number,
+  onChange?: () => void | Promise<void>,
 ) {
-  const [isFollowing, setIsFollowing] = useState(Boolean(initialIsFollowing));
-
-  const [followersCount, setFollowersCount] = useState(
-    Number(initialFollowersCount ?? 0),
+  const [pendingFollowing, setPendingFollowing] = useState<boolean | null>(
+    null,
   );
-
+  const [pendingFollowersCount, setPendingFollowersCount] = useState<
+    number | null
+  >(null);
   const [loading, setLoading] = useState(false);
+
+  const isFollowing = pendingFollowing ?? Boolean(initialIsFollowing);
+  const followersCount =
+    pendingFollowersCount ?? Number(initialFollowersCount ?? 0);
 
   async function toggle(userId: string) {
     if (!userId || loading) return;
 
     setLoading(true);
 
-    const wasFollowing = isFollowing;
+    const wasFollowing = pendingFollowing ?? Boolean(initialIsFollowing);
+    const nextValue = !wasFollowing;
 
-    setIsFollowing(!wasFollowing);
-    setFollowersCount((count) =>
-      wasFollowing ? Math.max(0, count - 1) : count + 1,
+    setPendingFollowing(nextValue);
+    setPendingFollowersCount((count) =>
+      wasFollowing
+        ? Math.max(0, (count ?? Number(initialFollowersCount ?? 0)) - 1)
+        : (count ?? Number(initialFollowersCount ?? 0)) + 1,
     );
 
     try {
@@ -31,11 +39,13 @@ export function useFollow(
       } else {
         await followUser(userId);
       }
+
+      await onChange?.();
+      setPendingFollowing(null);
+      setPendingFollowersCount(null);
     } catch {
-      setIsFollowing(wasFollowing);
-      setFollowersCount((count) =>
-        wasFollowing ? count + 1 : Math.max(0, count - 1),
-      );
+      setPendingFollowing(null);
+      setPendingFollowersCount(null);
     } finally {
       setLoading(false);
     }
