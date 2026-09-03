@@ -46,6 +46,10 @@ export type {
   CodeChefSyncStatus,
   CodeChefSyncStatusResponse,
   SyncCodeChefResponse,
+  FeedResponse,
+  QuestionSearchResponse,
+  CreatePostResponse, 
+  UserPostsResponse
 } from "./api";
 
 // ============================================================================

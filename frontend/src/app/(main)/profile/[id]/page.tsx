@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import type { PlatformRating } from "@/types";
 import { useFollow } from "@/hooks/useFollow";
+import { useUserPosts } from "@/hooks/useUserPosts";
 
 const PLATFORM_LABEL: Record<PlatformRating["platform"], string> = {
   codeforces: "Codeforces",
@@ -36,6 +37,7 @@ export default function ProfilePage() {
     loading: followingLoading,
     toggle,
   } = useFollow(profile?.is_following, profile?.followers_count, refetch);
+  const { posts, visible, loading: postsLoading } = useUserPosts(params.id)
 
   const isOwnProfile = currentUser?.id === params.id;
 
@@ -223,6 +225,52 @@ export default function ProfilePage() {
           ))}
         </div>
       )}
+      <div className="mt-6">
+        <h2 className="mb-3 text-sm font-semibold">
+          Revision Questions
+        </h2>
+
+        {!visible ? (
+          <p className="py-8 text-sm text-center text-muted-foreground">
+            Follow {user.name} to see their revision questions.
+          </p>
+        ) : postsLoading ? (
+          <p className="text-sm text-muted-foreground">
+            Loading...
+          </p>
+        ) : posts.length === 0 ? (
+          <p className="py-8 text-sm text-center text-muted-foreground">
+            No revision questions posted yet.
+          </p>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {posts.map((post) => (
+              <div
+                key={post.id}
+                className="p-4 border border-border rounded-xl"
+              >
+                <a
+                  href={post.questions.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  {post.questions.title}{" "}
+                  <span className="text-muted-foreground">
+                    ({post.questions.platform})
+                  </span>
+                </a>
+
+                {post.note && (
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {post.note}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

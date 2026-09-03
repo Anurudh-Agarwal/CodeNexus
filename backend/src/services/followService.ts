@@ -62,3 +62,17 @@ export async function getFollowStatus(
     is_following: !!isFollowingResult.data,
   };
 }
+
+export async function canViewPosts(viewerId: string | null , profileUserId: string):Promise<boolean>{
+  if(!viewerId) return false;
+  if(viewerId===profileUserId) return true;
+
+  const {data: profileUser}= await supabase.from('users').select('is_private').eq('id', profileUserId ).maybeSingle()
+  
+  if(!profileUser) return false
+  if(!profileUser.is_private) return true
+
+  const { data: isFollowBack }= await supabase.from('follows').select('id').eq('following_id', viewerId).eq('follower_id', profileUserId).maybeSingle()
+  
+  return !!isFollowBack
+}

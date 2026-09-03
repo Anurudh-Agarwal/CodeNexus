@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { fetchUserProfile } from "../services/userService";
 import { supabase } from "../lib/supabase";
+import { canViewPosts } from "../services/followService";
+import { getUserRevisionPosts } from "../services/feedService";
 
 export async function getUserProfile(
   req: Request<{ userId: string }>,
@@ -44,5 +46,37 @@ export async function getUserProfile(
   } catch (err) {
     console.error("Profile error: ", err);
     res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+}
+
+export async function getUserPosts(req: Request<{userId: string}>, res: Response){
+  try{
+    const cookieHeader = req.headers.cookie ?? "";
+    const cookieToken = cookieHeader
+      .split(";")
+      .map((cookie) => cookie.trim())
+      .find((cookie) => cookie.startsWith("codenexus_session="))
+      ?.replace("codenexus_session=", "");
+
+    const authHeader = req.headers.authorization;
+    const bearerToken = authHeader?.startsWith("Bearer ")
+      ? authHeader.slice("Bearer ".length)
+      : null;
+
+    const token = cookieToken ? decodeURIComponent(cookieToken) : bearerToken;
+
+    let viewerId: string | null = null;
+    if (token) {
+      const { data } = await supabase.auth.getUser(token);
+      viewerId = data.user?.id ?? null;
+    }
+
+    const visible = await canViewPosts(viewerId, req.params.userId);
+    const posts = visible ? await getUserRevisionPosts(req.params.userId) : [];
+
+    res.status(200).json({ success: true, data: { posts, visible } });
+  } catch (err) {
+    console.error("Get user posts error: ", err);
+    res.status(500).json({ success: false, error: "Internal server error" });
   }
 }

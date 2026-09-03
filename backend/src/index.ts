@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth";
 import userRoutes from "./routes/users";
 import syncRoutes from "./routes/sync";
 import followRoutes from "./routes/follow";
+import feedRoutes from "./routes/feed"
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -50,6 +51,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/sync", syncRoutes);
 app.use("/api/follows", followRoutes);
+app.use("/api/feed", feedRoutes);
 
 app.use(
   (
@@ -76,3 +78,4 @@ process.on("unhandledRejection", (err) => {
 process.on("uncaughtException", (err) => {
   console.error("Uncaught exception:", err);
 });
+

@@ -1,5 +1,6 @@
 import {
   ApiResponse,
+  FeedResponse,
   LeaderboardResponse,
   LoginRequest,
   LoginResponse,
@@ -8,6 +9,7 @@ import {
   SignupResponse,
   CodeforcesSyncStatusResponse,
   User,
+  UserPostsResponse,
 } from "@/types";
 import {
   RequestVerificationResponse,
@@ -178,4 +180,33 @@ export const unfollowUser = async (userId: string) => {
   return apiCall<ApiResponse<null>>(`/api/follows/${userId}`, {
     method: "DELETE",
   });
+};
+
+export const searchQuestions = async (q: string) => {
+  return apiCall<ApiResponse<null>>(
+    `/api/feed/questions/search?q=${encodeURIComponent(q)}`,
+  );
+};
+
+export const createRevisionPost = async (body: {
+  questionId?: string;
+  url?: string;
+  platform?: string;
+  title?: string;
+  note?: string;
+}) => {
+  return apiCall<ApiResponse<null>>("/api/feed/posts", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+};
+
+export const getHomeFeed = async (): Promise<FeedResponse> => {
+  return apiCall<FeedResponse>("/api/feed/home");
+};
+
+export const getUserPosts = async (
+  userId: string,
+): Promise<UserPostsResponse> => {
+  return apiCall<UserPostsResponse>(`/api/feed/${userId}/posts`);
 };

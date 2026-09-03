@@ -221,3 +221,24 @@ export type ErrorResponse = ApiResponse<null> & {
   success: false;
   error: string;
 };
+
+// types/api.ts (add)
+export interface Question {
+  id: string
+  platform: 'codeforces' | 'leetcode' | 'codechef' | 'other'
+  title: string
+  url: string
+}
+
+export interface RevisionPost {
+  id: string
+  note: string | null
+  created_at: string
+  questions: Question
+  users: { id: string; name: string; avatar_url?: string }
+}
+
+export type FeedResponse = ApiResponse<RevisionPost[]>
+export type QuestionSearchResponse = ApiResponse<Question[]>
+export type CreatePostResponse = ApiResponse<RevisionPost>
+export type UserPostsResponse = ApiResponse<{ posts: RevisionPost[]; visible: boolean }>
