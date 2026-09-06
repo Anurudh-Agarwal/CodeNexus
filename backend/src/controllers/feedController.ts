@@ -16,13 +16,13 @@ export async function searchQuestionsHandler(req: Request, res: Response){
 export async function createPost(req: Request, res: Response){
     try{
         const userId = req.user!.id
-        const {questionId, url, title , platform , note }= req.body
+        const {questionId, url , platform , note }= req.body
         let finalQuestionId=questionId
         if(!questionId){
-            if(!platform || !title || !url){
-                res.status(400).json({success: false, error: 'url, platform, title are required for a new question' })
+            if(!platform || !url){
+                res.status(400).json({success: false, error: 'url, platform are required for a new question' })
             }
-            finalQuestionId = (await findOrCreateQuestion(userId, {url , title, platform})).id
+            finalQuestionId = (await findOrCreateQuestion(userId, {url , platform})).id
         }
         const post = await createRevisionPost(userId, finalQuestionId, note||null)
         return res.status(200).json({success: true, data: post})

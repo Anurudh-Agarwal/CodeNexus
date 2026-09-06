@@ -13,7 +13,6 @@ export default function HomePage() {
   const [results, setResults] = useState<Question[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newUrl, setNewUrl] = useState("");
-  const [newTitle, setNewTitle] = useState("");
   const [newPlatform, setNewPlatform] = useState<
     "codeforces" | "leetcode" | "codechef" | "other"
   >("codeforces");
@@ -50,7 +49,6 @@ export default function HomePage() {
     try {
       await createRevisionPost({
         url: newUrl,
-        title: newTitle,
         platform: newPlatform,
         note: note || undefined,
       });
@@ -103,13 +101,6 @@ export default function HomePage() {
 
         {showAddForm && (
           <form onSubmit={postNew} className="flex flex-col gap-2 mt-2">
-            <input
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              placeholder="Problem title"
-              required
-              className="px-3 py-2 text-sm border border-border rounded-lg bg-background"
-            />
             <input
               value={newUrl}
               onChange={(e) => setNewUrl(e.target.value)}

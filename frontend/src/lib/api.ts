@@ -20,8 +20,8 @@ import {
   SyncCodeChefResponse,
 } from "@/types/api";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-//const API_BASE_URL = "http://localhost:5000";
+// const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const API_BASE_URL = "http://localhost:5000";
 
 const apiCall = async <T>(
   endpoint: string,
@@ -192,7 +192,6 @@ export const createRevisionPost = async (body: {
   questionId?: string;
   url?: string;
   platform?: string;
-  title?: string;
   note?: string;
 }) => {
   return apiCall<ApiResponse<null>>("/api/feed/posts", {
